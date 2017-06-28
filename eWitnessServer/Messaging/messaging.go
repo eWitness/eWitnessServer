@@ -1,5 +1,13 @@
 /*
-    Messagining funcitons to handle the network communication
+    File: Messaging/messaging.go
+    Authors: Kevin Gallagher
+
+    Messagining is a package of funcitons to handle the network
+    communication between servers. It provides functionality for sending
+    data down the wire and for handling networking communication that
+    arrives, calling the appropriate functions. It does not prepare data
+    for transfer across the wire by converting to JSON. That must be done
+    elsewhere.
 */
 
 package Messaging
@@ -12,7 +20,7 @@ import (
 
 /*
     Below are the INT assignments to given functions that will appear
-    in the messaging struct.
+    in the messaging struct. These values should not change.
 */
 
 const ADD_HASH              := 1
@@ -24,14 +32,17 @@ const REQUEST_BLOCK_NUMBER  := 6
 const AUTH_REQ              := 7
 const AUTH_REPLY            := 8
 const FAIL                  := 9
+const GOSSIP                := 10
 
 // TODO: Need to change the databaseConnection type.
 
 /*
-  This function will handle a connection when it comes in.
+  HandleSocket will handle a connection when it comes in.
 
-  Input:  1) A connection to the remote client. (type net.Conn)
+  Args:   1) A connection to the remote client. (type net.Conn)
           2) A database connection to run queries on. (type string)
+
+  Input:  None
   
   Output: 1) Network output to the client. This can be an acknowledge
              message, a failure message, or an authentication challenge.
@@ -40,6 +51,7 @@ const FAIL                  := 9
              or more.
           3) An integer to indicate success or failure of the function's
              execution.
+  Return: None
 
   TODO: Change the reading mechanism to ioutil readall
 */
@@ -57,7 +69,7 @@ func HandleSocket(connection net.Conn, databaseConnection string) {
    }
    /*
       Here we convert the jsonString to a record and then switch on the
-      record's RequestType. Depending on the result we call the 
+      record's RequestType. Depending on the result we call the
       appropriate function.
    */
     receivedData = record.DecodeRecord([]byte(jsonString))
@@ -83,13 +95,15 @@ func HandleSocket(connection net.Conn, databaseConnection string) {
 
 
 /*
-  This function will acknowledge a successful communication event.
+  alertAcknowledge will acknowledge a successful communication event.
 
-    Input:  1) A record struct containing the client's data.
+    Args:   1) A record struct containing the client's data. (type
+               record.Record)
             2) A connection to the remote client. (type net.Conn)
 
-    Output: 1) Network output to the client. This can be an acknowledge
-               message, a failure message, or an authentication challenge.
+    Input:  None
+
+    Output: 1) Network output to the client ackowledging success.
 
     Return: 1) An integer, with -1 meaning failure and 0 meaning success.
 */
@@ -105,7 +119,18 @@ func alertAkcnowledge(receievedData record.Record, conn net.Conn) int {
 
 
 /*
+  alertFailure will alert a client that their attempted operation has
+  failed. 
 
+  Args:   1) A Record struct containing the received data. (type
+            record.Record)
+          2) A network connection to the client. (type net.Conn)
+
+  Input:  None
+
+  Output: 1) Network communication to the client informing it of failure.
+
+  Return: 1) An integer of value 0 or -1 signifying success or failure.
 */
 func alertFailure(receivedData record.Record, conn net.Conn) int {
     receivedData.RequestType = FAIL
