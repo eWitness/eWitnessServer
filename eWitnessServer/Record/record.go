@@ -1,3 +1,15 @@
+/*
+    File: Record/record.go
+    Authors: Kevin Gallagher
+
+    Record defines a struct for holding data that arrives from the
+    network. It also contains functions for operating on this data.
+    Last, this file contains constants needed to determine what operations
+    to perform on the record structure.
+
+*/
+
+
 package record
 
 import (

@@ -1,3 +1,17 @@
+/*
+    File: User/user.go
+    Authors: Kevin Gallagher
+
+    This file contains the user struct, which contains information about
+    the users who have signed up for the eWitness server. All code that 
+    deals with storing user data should be contained within this file,
+    with the exception of code that places the user information into the
+    database.
+
+    NOTE: This is likely to change a lot when consensus is implimented.
+*/
+
+
 package user
 
 import (
