@@ -16,6 +16,7 @@ import (
     "fmt"
     "time"
     "encoding/json"
+    "hash"
 )
 
 /* 
@@ -44,7 +45,7 @@ const ACK int = 5
 
 type Record struct {
     RequestType         int
-    HashData            [32]byte //could change
+    HashData            [64]byte // for use with the hash/sha3 library
     LocationAttestation [32]byte //could change
     HashID              int
     UserID              int
@@ -64,6 +65,18 @@ type Record struct {
         2) Convert a valid JSON string to a record
 */
 
+/*
+  EncodeRecord will convert a Record to a JSON String.
+
+    Args:   1) A record struct to convert. (type Record)
+
+    Input:  None
+                  
+    Output: None
+
+    Return: A byte array that represents the json String. 
+*/
+
 func EncodeRecord(convertMe Record) []byte {
     returnArray, err := json.Marshal(convertMe)
     if err != nil {
@@ -75,8 +88,23 @@ func EncodeRecord(convertMe Record) []byte {
     return returnArray
 }
 
-func DecodeRecord(jsonString string) Record {
+
+/*
+  DecodeRecord will convert a JSON String into a Record.
+
+    Args:   1) A jsonString to convert. (type byte[])
+
+    Input:  None
+                            
+    Output: None
+
+    Return: A record containing the information in the JSON string.
+*/
+
+func DecodeRecord(jsonString byte[]) Record {
     returnRecord := Record{}
     json.Unmarshal([]byte(jsonString), &returnRecord)
     return returnRecord
 }
+
+
