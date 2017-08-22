@@ -9,7 +9,6 @@
 
 */
 
-
 package record
 
 import (
@@ -18,6 +17,8 @@ import (
     "encoding/json"
     "hash"
 )
+
+const HASH_SIZE int = 64
 
 /* 
    The following are shortcuts for ints that are expected in the 
@@ -45,7 +46,7 @@ const ACK int = 5
 
 type Record struct {
     RequestType         int
-    HashData            [64]byte // for use with the hash/sha3 library
+    HashData            [HASH_SIZE]byte // for use with sha3
     LocationAttestation [32]byte //could change
     HashID              int
     UserID              int
