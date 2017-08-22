@@ -77,11 +77,12 @@ Example:
 ```
 /*
   This function will acknowledge a successful communication event.
-    Input:  1) A record struct containing the client's data.
+    Args:   1) A record struct containing the client's data.
             2) A connection to the remote client. (type net.Conn)
+    Input:  None.
     Output: 1) Network output to the client. This can be an acknowledge
                message, a failure message, or an authentication challenge.
-    Return: 1) An integer, with -1 meaning failure and 0 meaning success.
+    Return:    An integer, with -1 meaning failure and 0 meaning success.
 */ 
 ```
 ## Struct Documentation 
