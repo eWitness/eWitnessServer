@@ -15,10 +15,16 @@ import (
     "fmt"
     "time"
     "encoding/json"
-    "hash"
+    "crypto/sha3"
 )
 
-const HASH_SIZE int = 64
+/*
+   The following are constants for parameters that will be used frequently
+   like the size of a nonce, or a location attestation.
+*/
+
+const NONCE_SIZE int = 32
+const LOCATION_SIZE int = 32
 
 /* 
    The following are shortcuts for ints that are expected in the 
@@ -46,8 +52,8 @@ const ACK int = 5
 
 type Record struct {
     RequestType         int
-    HashData            [HASH_SIZE]byte // for use with sha3
-    LocationAttestation [32]byte //could change
+    HashData            [crypto.SHA3_512]byte // for use with sha3
+    LocationAttestation [LOCATION_SIZE]byte //could change
     HashID              int
     UserID              int
     Signature           string //could change to byte array
@@ -55,8 +61,9 @@ type Record struct {
     PublicKey           string //May change to byte array
     ClientIP            string
     ClientPort          int
-    Nonce               [32]byte
+    Nonce               [NONCE_SIZE]byte
     Timestamp           time.Time
+    SessionKey          string
 }
 
 /* 
@@ -107,5 +114,3 @@ func DecodeRecord(jsonString byte[]) Record {
     json.Unmarshal([]byte(jsonString), &returnRecord)
     return returnRecord
 }
-
-

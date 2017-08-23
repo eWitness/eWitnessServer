@@ -13,6 +13,7 @@
 
 import (
     "database/sql"
+    "time"
 )
 
 import _ "github.com/go-sql-drvier/mysql"
@@ -76,5 +77,26 @@ func AddHashRecord(hashRecord record.Record&) {
                                   cryptography.CheckSignature(hashRecord),
                                   hashRecord.UserID)
 }
+/*
+   RegisterUser takes a record received from the network and uses the
+   information contained to register a user to the eWitness network.
 
+   Args: A hash record (type record.Record)
+ 
+   Input: Prepared statement (declared constant type *Stmt)
 
+   Output: None
+
+   Returns: An SQL result instance (type sql.Result)
+*/
+func RegisterUser(registrationRecord record.Record&) {
+    year := time.Duration(8760)*time.Hours
+    now := time.Now()
+    lastUserID = getLastUserID()
+    return InRegisterRecord.Execute(lastUserID + 1,
+                                    registrationRecord.PublicKey,
+                                    now,
+                                    now.AddDate(1,0,0),
+                                    cryptography.RandomString(),
+                                    now.AddDate(0,0,3))
+}

@@ -1,0 +1,34 @@
+/*
+   File: Cryptography/cryptography.go
+   Authors: Kevin Gallagher
+
+   The cryptography file handles all cryptographic work done by eWitness,
+   including signature checking, hashing, and key generation. In addition, 
+   this file handles all generation of random values.
+*/
+
+import (
+    "crypto/rand"
+    "time"
+    "encoding/base64"
+)
+
+/*
+   RamdomString generates a random string for use elsewhere in the
+   program. It uses the random library with the seed of the current Unix
+   time.
+
+   Args: None
+
+   Input: None
+
+   Output: None
+
+   Return: A base64 encoded string of the randomly generated data.
+*/
+
+func RandomString() string {
+    returnString := make([]byte, 32, 32)
+    rand.Read(returnString)
+    return base64.StdEncoding.EncodeToString(returnString)
+}
