@@ -6,6 +6,7 @@
    including signature checking, hashing, and key generation. In addition, 
    this file handles all generation of random values.
 */
+package cryptography
 
 import (
     "crypto/rand"
