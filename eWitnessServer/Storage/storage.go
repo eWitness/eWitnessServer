@@ -28,13 +28,24 @@ import _ "github.com/go-sql-drvier/mysql"
 */
 const DB, err := GetDatabase()
 const InRecordStatement, err := DB.Prepare("INSERT INTO hash_records"
-                                            + "VALUES (?, ?, ?, ?, ?, ?)")
+                                 + "VALUES (?, ?, ?, ?, ?, ?)")
 const OutRecordStatement, err := DB.Prepare("SELECT hash_id, hash_data,"
                                  + "location_commitment, timestamp, "
                                  + "verified, user_id FROM hash_records "
                                  + "WHERE hash_id = ?")
 const InRegisterStatement, err := DB.Prepare("INSERT INTO users VALUES"
-                                  + "(?, ?, ?, ?, ?, ?)")
+                                 + "(?, ?, ?, ?, ?, ?)")
+const OutKeyStatement, err := DB.Prepare("SELECT public_key FROM users"
+                                 + "WHERE user_id = ?")
+const OutSessionStatement, err := DB.Prepare("SELECT session_id,"
+                                 + "session_exp FROM users WHERE"
+                                 + "user_id = ?")
+const UpdateSessionStatement, err := DB.Prepare("UPDATE users SET"
+                                 + "session_id = ?, session_exp = ? WHERE"
+                                 + "user_id = ?")
+const UpdateKeySession, err := DB.Prepare("UPDATE users SET public_key=?,"
+                                 + "key_exp = ? WHERE user_id = ?")
+const GetMaxUserID, err := DB.Prepare("SELECT MAX(user_id) FROM users")
 
 /*
    GetDatabase will fetch the database instance stored in the config so
@@ -84,16 +95,18 @@ func AddHashRecord(hashRecord record.Record&) {
    Args: A hash record (type record.Record)
  
    Input: Prepared statement (declared constant type *Stmt)
+          Max current user ID from the database.
 
    Output: None
 
    Returns: An SQL result instance (type sql.Result)
 */
 func RegisterUser(registrationRecord record.Record&) {
+    var lastUserID int
     year := time.Duration(8760)*time.Hours
     now := time.Now()
-    lastUserID = getLastUserID()
-    return InRegisterRecord.Execute(lastUserID + 1,
+    GetMaxUserID.QueryRow().Scan(lastUserID)
+    return InRegisterRecord.Exec(lastUserID + 1,
                                     registrationRecord.PublicKey,
                                     now,
                                     now.AddDate(1,0,0),
