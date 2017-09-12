@@ -14,8 +14,10 @@ package record
 import (
     "fmt"
     "time"
+    "encoding/pem"
     "encoding/json"
     "crypto/sha3"
+    "crypto"
 )
 
 /*
@@ -57,13 +59,15 @@ type Record struct {
     HashID              int
     UserID              int
     Signature           string //could change to byte array
-    Expiration          time.Time //May not compile depending on type
-    PublicKey           string //May change to byte array
+    Expiration          time.Time
+    PublicKey           crypto.PublicKey
+    KeyType             string
     ClientIP            string
     ClientPort          int
     Nonce               [NONCE_SIZE]byte
     Timestamp           time.Time
     SessionKey          string
+    Verified            bool
 }
 
 /* 
@@ -112,5 +116,47 @@ func EncodeRecord(convertMe Record) []byte {
 func DecodeRecord(jsonString byte[]) Record {
     returnRecord := Record{}
     json.Unmarshal([]byte(jsonString), &returnRecord)
+    return returnRecord
+}
+
+
+/*
+   The functions below will help in constructing different types of
+   records for different uses. 
+*/
+/*
+   NewHashRecord will create a new record that contains the data of a hash
+   submission. The present variables represent the columns of the
+   hash_record table.
+
+   Args: hashID, the identifier of the hash (type int)
+         hashData, the data of the hash (type []byte)
+         userID, the identifier of the user who submitted the hash 
+             (type int)
+         locationAttestation, the location commitment of the photo 
+             (type []byte)
+         verified, which signifies if the ownership has been verified by 
+             checking the cryptographic signature (type bool)
+         timestamp, which signifies what time the hash was submitted
+             (type time.Time)
+
+   Input: None
+
+   Output: None
+
+   Returns: A new record struct containing this data (type Record)
+*/
+func NewHashRecord(hashID int, hashData [crypto.SHA3_512]byte,
+                   userID, int, locationAttestation [LOCATION_SIZE]byte,
+                   verified bool, timestamp time.Time) (Record, error){
+
+    var returnRecord record.Record
+    returnRecord.UserID = userID
+    returnRecord.HashID = hashID
+    returnRecord.HashData = hashData
+    returnRecord.LocationAttestation = locationAttestation
+    returnRecord.Verified = verified
+    returnRecord.Timestamp = timestamp
+
     return returnRecord
 }

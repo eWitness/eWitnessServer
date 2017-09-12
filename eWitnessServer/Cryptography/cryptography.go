@@ -33,3 +33,18 @@ func RandomString() string {
     rand.Read(returnString)
     return base64.StdEncoding.EncodeToString(returnString)
 }
+/*
+   CheckSignature takes as input a public key, a signature, and arbitrary
+   data, and checks the signature on that data. It returns a boolean to 
+   signify if the signature verification passed.
+
+   Args: PublicKey
+         Signature
+         Data
+
+   Input: None
+
+   Output: None
+
+   Return: Success or failure (type bool)
+*/
